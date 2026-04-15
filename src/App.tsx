@@ -23,7 +23,8 @@ import {
   Clock,
   ShieldCheck,
   Info,
-  X
+  X,
+  Menu
 } from "lucide-react";
 
 const LOGO_URL = "https://images.squarespace-cdn.com/content/v1/65d4ebcfb92f9e409d8cf8c9/fafb875f-93d8-4dc8-8400-72e569bdc1f0/Logo+NSff.png?format=1500w";
@@ -62,11 +63,12 @@ const Button = ({ children, className = "", variant = "primary", onClick }: { ch
 
 export default function App() {
   const [isPastEventsOpen, setIsPastEventsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [submissionType, setSubmissionType] = useState<"standard" | "student">("standard");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <AnimatePresence>
         {isModalOpen && (
           <motion.div 
@@ -205,9 +207,11 @@ export default function App() {
         )}
       </AnimatePresence>
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 w-full overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <img src={LOGO_URL} alt="NSFF Logo" className="h-14 w-auto" referrerPolicy="no-referrer" />
+          <img src={LOGO_URL} alt="NSFF Logo" className="h-10 md:h-14 w-auto" referrerPolicy="no-referrer" />
+          
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8 font-bold uppercase text-sm tracking-widest text-gray-900">
             <a href="/" className="hover:text-nsff-red transition-colors">Home</a>
             <a href="#about" className="hover:text-nsff-red transition-colors">About</a>
@@ -253,10 +257,45 @@ export default function App() {
             <a href="#blog" className="hover:text-nsff-red transition-colors">Blog</a>
             <a href="#submit" className="text-nsff-red">Submit</a>
           </div>
-          <a href="#submit">
-            <Button className="hidden md:block py-2 px-6 text-xs" variant="primary">Submit Now</Button>
-          </a>
+
+          <div className="flex items-center gap-4">
+            <a href="#submit" className="hidden md:block">
+              <Button className="py-2 px-6 text-xs" variant="primary">Submit Now</Button>
+            </a>
+            
+            {/* Mobile Menu Toggle */}
+            <button 
+              className="md:hidden p-2 text-gray-900"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
+            >
+              <div className="flex flex-col p-6 space-y-4 font-bold uppercase text-sm tracking-widest text-gray-900">
+                <a href="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-nsff-red transition-colors">Home</a>
+                <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-nsff-red transition-colors">About</a>
+                <a href="#awards" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-nsff-red transition-colors">Awards</a>
+                <a href="#rules" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-nsff-red transition-colors">Rules</a>
+                <a href="#blog" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-nsff-red transition-colors">Blog</a>
+                <a href="#submit" onClick={() => setIsMobileMenuOpen(false)} className="text-nsff-red">Submit</a>
+                <a href="#submit" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full py-4" variant="primary">Submit Now</Button>
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}
@@ -288,27 +327,22 @@ export default function App() {
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 h-full flex flex-col justify-center">
           {/* Top Right Info - Aligned with Submit Now button, no background */}
-          <div className="absolute top-32 right-6 z-20 text-right">
-            <h3 className="text-nsff-yellow text-5xl md:text-6xl font-display font-black leading-none drop-shadow-2xl">Cannes</h3>
-            <p className="text-white text-2xl md:text-3xl font-display font-bold mt-2 drop-shadow-lg">May 13-21, 2026</p>
+          <div className="absolute top-24 md:top-32 right-6 z-20 text-right">
+            <h3 className="text-nsff-yellow text-3xl md:text-6xl font-display font-black leading-none drop-shadow-2xl">Cannes</h3>
+            <p className="text-white text-lg md:text-3xl font-display font-bold mt-2 drop-shadow-lg">May 13-21, 2026</p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl"
-          >
-            <h1 className="text-nsff-yellow text-7xl md:text-[10rem] font-display font-black mb-4 leading-[0.8] drop-shadow-2xl">
+          <div className="max-w-4xl">
+            <h1 className="text-nsff-yellow text-5xl md:text-[10rem] font-display font-black mb-4 leading-[0.8] drop-shadow-2xl">
               Next Step
             </h1>
-            <p className="text-white text-lg md:text-xl font-medium mb-10 max-w-xl opacity-90 drop-shadow-md">
+            <p className="text-white text-base md:text-xl font-medium mb-10 max-w-xl opacity-90 drop-shadow-md">
               First step make a movie, next step build your career.
             </p>
             <a href="#submit">
-              <Button variant="primary" className="text-xl px-12 py-6">SUBMIT YOUR FILM</Button>
+              <Button variant="primary" className="text-lg md:text-xl px-8 md:px-12 py-4 md:py-6">SUBMIT YOUR FILM</Button>
             </a>
-          </motion.div>
+          </div>
         </div>
 
         {/* Film Strip Decoration */}
